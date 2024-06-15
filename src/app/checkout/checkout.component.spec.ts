@@ -2,9 +2,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { StandardItem } from '../items/shared/standard-item.model';
 import { CheckoutComponent } from './checkout.component';
-import { OrderItem } from './shared/order-item.model';
+import { Checkout } from './shared/checkout';
+import { BasePricingRule } from './shared/pricing-rules/base-pricing-rule';
+import { FixedDiscountRule } from './shared/pricing-rules/fixed-discount-rule';
+import { ItemQuantityCondition } from './shared/pricing-rules/item-quantity-condition';
 
-const DUMMY_ITEMS = {
+const DUMMY_ITEMS: { [sku: string]: StandardItem } = {
   A: new StandardItem('A', 'Item A', 50),
   B: new StandardItem('B', 'Item B', 30),
   C: new StandardItem('C', 'Item C', 20),
@@ -12,32 +15,26 @@ const DUMMY_ITEMS = {
 };
 
 const SINGLE_ITEM_RULESET = [
-  new PricingRule(
-    [new QuantityPricingRuleCondition(DUMMY_ITEMS.A, 3)],
-    new ConstantPriceModifier(-20)
-  ),
-  new PricingRule(
-    [new QuantityPricingRuleCondition(DUMMY_ITEMS.A, 3)],
-    new ConstantPriceModifier(-15)
-  ),
+  new FixedDiscountRule([new ItemQuantityCondition(DUMMY_ITEMS['A'], 3)], -20),
+  new FixedDiscountRule([new ItemQuantityCondition(DUMMY_ITEMS['B'], 2)], -15),
 ];
 
 const MULTI_ITEM_RULESET = [
-  new PricingRule(
+  new FixedDiscountRule(
     [
-      new QuantityPricingRuleCondition(DUMMY_ITEMS.A, 1),
-      new QuantityPricingRuleCondition(DUMMY_ITEMS.B, 2),
+      new ItemQuantityCondition(DUMMY_ITEMS['A'], 1),
+      new ItemQuantityCondition(DUMMY_ITEMS['B'], 2),
     ],
-    new ConstantPriceModifier(-50)
+    -50
   ),
-  new PricingRule(
+  new FixedDiscountRule(
     [
-      new QuantityPricingRuleCondition(DUMMY_ITEMS.A, 1),
-      new QuantityPricingRuleCondition(DUMMY_ITEMS.B, 1),
-      new QuantityPricingRuleCondition(DUMMY_ITEMS.C, 1),
-      new QuantityPricingRuleCondition(DUMMY_ITEMS.D, 1),
+      new ItemQuantityCondition(DUMMY_ITEMS['A'], 1),
+      new ItemQuantityCondition(DUMMY_ITEMS['B'], 1),
+      new ItemQuantityCondition(DUMMY_ITEMS['C'], 1),
+      new ItemQuantityCondition(DUMMY_ITEMS['D'], 1),
     ],
-    new ConstantPriceModifier(-15)
+    -15
   ),
 ];
 
@@ -45,7 +42,7 @@ describe('CheckoutComponent', () => {
   let component: CheckoutComponent;
   let fixture: ComponentFixture<CheckoutComponent>;
 
-  function getTotalPrice(itemKeys: string, rules: PricingRules[]) {
+  function getTotalPrice(itemKeys: string, rules: BasePricingRule[]) {
     const checkout = new Checkout(rules);
 
     for (let i = 0; i < itemKeys.length; i++) {
@@ -72,20 +69,6 @@ describe('CheckoutComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  // Test checkout
-  it('should be able to represent a line item in cart', () => {
-    const lineItem = new OrderItem(DUMMY_ITEMS.A, 2);
-    expect(lineItem).toBeTruthy();
-    expect(lineItem.item).toEqual(DUMMY_ITEMS.A);
-    expect(lineItem.quantity).toEqual(2);
-  });
-
-  it('should error on invalid line item quantity', () => {
-    expect(new OrderItem(DUMMY_ITEMS.A, 0)).toThrowError();
-    expect(new OrderItem(DUMMY_ITEMS.A, -3)).toThrowError();
-    expect(new OrderItem(DUMMY_ITEMS.A, Infinity)).toThrowError();
   });
 
   it('should be able to calculate the price of items without discounts', () => {
@@ -117,19 +100,18 @@ describe('CheckoutComponent', () => {
 
     expect(checkout.total).toEqual(0);
 
-    checkout.scan(DUMMY_ITEMS.A);
+    checkout.scan(DUMMY_ITEMS['A']);
     expect(checkout.total).toEqual(50);
 
-    checkout.scan(DUMMY_ITEMS.B);
+    checkout.scan(DUMMY_ITEMS['B']);
     expect(checkout.total).toEqual(80);
 
-    checkout.scan(DUMMY_ITEMS.A);
+    checkout.scan(DUMMY_ITEMS['A']);
     expect(checkout.total).toEqual(130);
 
-    checkout.scan(DUMMY_ITEMS.A);
+    checkout.scan(DUMMY_ITEMS['A']);
     expect(checkout.total).toEqual(160);
-
-    checkout.scan(DUMMY_ITEMS.B);
+    checkout.scan(DUMMY_ITEMS['B']);
     expect(checkout.total).toEqual(175);
   });
 
@@ -142,6 +124,10 @@ describe('CheckoutComponent', () => {
     // -50 (1xA, 2xB), -50 (1xA, 2xB)
     expect(getTotalPrice('ABABABABAB', MULTI_ITEM_RULESET)).toEqual(300);
 
+    // -15 (1xA, 1xB, 1xC, 1xD)
+    expect(getTotalPrice('ABCCCDDD', MULTI_ITEM_RULESET)).toEqual(170);
+    expect(getTotalPrice('CADDCBCD', MULTI_ITEM_RULESET)).toEqual(170);
+
     // -50 (1xA, 2xB), -15 (1xA, 1xB, 1xC, 1xD)
     expect(getTotalPrice('AABBBCCDD', MULTI_ITEM_RULESET)).toEqual(195);
     expect(getTotalPrice('ABBACDCDB', MULTI_ITEM_RULESET)).toEqual(195);
@@ -152,25 +138,25 @@ describe('CheckoutComponent', () => {
 
     expect(checkout.total).toEqual(0);
 
-    checkout.scan(DUMMY_ITEMS.A);
+    checkout.scan(DUMMY_ITEMS['A']);
     expect(checkout.total).toEqual(50);
 
-    checkout.scan(DUMMY_ITEMS.B);
+    checkout.scan(DUMMY_ITEMS['B']);
     expect(checkout.total).toEqual(80);
 
-    checkout.scan(DUMMY_ITEMS.C);
+    checkout.scan(DUMMY_ITEMS['C']);
     expect(checkout.total).toEqual(100);
 
-    checkout.scan(DUMMY_ITEMS.D);
+    checkout.scan(DUMMY_ITEMS['D']);
     expect(checkout.total).toEqual(100); // -15 (1xA, 1xB, 1xC, 1xD)
 
-    checkout.scan(DUMMY_ITEMS.B);
+    checkout.scan(DUMMY_ITEMS['B']);
     expect(checkout.total).toEqual(95); // -50 (1xA, 2xB)
 
-    checkout.scan(DUMMY_ITEMS.A);
+    checkout.scan(DUMMY_ITEMS['A']);
     expect(checkout.total).toEqual(145);
 
-    checkout.scan(DUMMY_ITEMS.B);
+    checkout.scan(DUMMY_ITEMS['B']);
     expect(checkout.total).toEqual(160); // -50 (1xA, 2xB), -15 (1xA, 1xB, 1xC, 1xD)
   });
 });
