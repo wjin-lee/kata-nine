@@ -21,8 +21,9 @@ describe('ItemsComponent', () => {
   });
 
   it('should be able to create an item object', () => {
-    let item = new OrderItem('itemName', 5.0);
+    let item = new OrderItem('itemSKU', 'itemName', 5.0);
     expect(item).toBeTruthy();
+    expect(item.sku).toEqual('itemSKU');
     expect(item.name).toEqual('itemName');
     expect(item.unitPrice).toEqual(5.0);
   });
