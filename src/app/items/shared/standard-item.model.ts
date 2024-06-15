@@ -1,6 +1,6 @@
 import { BaseItem } from './base-item.interface';
 
-export class OrderItem implements BaseItem {
+export class StandardItem implements BaseItem {
   sku: string;
   name: string;
   unitPrice: number;
