@@ -21,7 +21,7 @@ Please see [technical implementation notes](#technical-implementation-notes) for
 
 ## Running
 > [!NOTE]  
-> An installation of [Node.js](https://nodejs.org/en) (`version <= 20`) is required.
+> An installation of [Node.js](https://nodejs.org/en) (`version >= 20`) is required.
 
 First, clone the repo and install the dependencies.
 ```
