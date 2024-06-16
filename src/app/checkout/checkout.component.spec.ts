@@ -95,6 +95,34 @@ describe('CheckoutComponent', () => {
     expect(getTotalPrice('DABABA', SINGLE_ITEM_RULESET)).toEqual(190);
   });
 
+  it('should be able to apply multi-item quantity discounts.', () => {
+    expect(getTotalPrice('', MULTI_ITEM_RULESET)).toEqual(0);
+
+    // Full price
+    expect(getTotalPrice('A', MULTI_ITEM_RULESET)).toEqual(50);
+    expect(getTotalPrice('AA', MULTI_ITEM_RULESET)).toEqual(100);
+    expect(getTotalPrice('AAA', MULTI_ITEM_RULESET)).toEqual(150);
+    expect(getTotalPrice('AAAB', MULTI_ITEM_RULESET)).toEqual(180);
+
+    // -50 (1xA, 2xB), -50 (1xA, 2xB)
+    expect(getTotalPrice('AB', MULTI_ITEM_RULESET)).toEqual(80);
+    expect(getTotalPrice('ABAB', MULTI_ITEM_RULESET)).toEqual(110);
+    expect(getTotalPrice('ABABAB', MULTI_ITEM_RULESET)).toEqual(190);
+    expect(getTotalPrice('ABABABAB', MULTI_ITEM_RULESET)).toEqual(220);
+    expect(getTotalPrice('ABABABABAB', MULTI_ITEM_RULESET)).toEqual(300);
+
+    // -15 (1xA, 1xB, 1xC, 1xD)
+    expect(getTotalPrice('AB', MULTI_ITEM_RULESET)).toEqual(80);
+    expect(getTotalPrice('ABC', MULTI_ITEM_RULESET)).toEqual(100);
+    expect(getTotalPrice('ABCCC', MULTI_ITEM_RULESET)).toEqual(140);
+    expect(getTotalPrice('ABCCCDDD', MULTI_ITEM_RULESET)).toEqual(170);
+    expect(getTotalPrice('CADDCBCD', MULTI_ITEM_RULESET)).toEqual(170);
+
+    // -50 (1xA, 2xB), -15 (1xA, 1xB, 1xC, 1xD)
+    expect(getTotalPrice('AABBBCCDD', MULTI_ITEM_RULESET)).toEqual(195);
+    expect(getTotalPrice('ABBACDCDB', MULTI_ITEM_RULESET)).toEqual(195);
+  });
+
   it('should have correct incremental totals when applying single-item quantity discounts.', () => {
     const checkout = new Checkout(SINGLE_ITEM_RULESET);
 
@@ -113,24 +141,6 @@ describe('CheckoutComponent', () => {
     expect(checkout.total).toEqual(160);
     checkout.scan(DUMMY_ITEMS['B']);
     expect(checkout.total).toEqual(175);
-  });
-
-  it('should be able to apply multi-item quantity discounts.', () => {
-    expect(getTotalPrice('', MULTI_ITEM_RULESET)).toEqual(0);
-
-    // Full price
-    expect(getTotalPrice('AAAB', MULTI_ITEM_RULESET)).toEqual(180);
-
-    // -50 (1xA, 2xB), -50 (1xA, 2xB)
-    expect(getTotalPrice('ABABABABAB', MULTI_ITEM_RULESET)).toEqual(300);
-
-    // -15 (1xA, 1xB, 1xC, 1xD)
-    expect(getTotalPrice('ABCCCDDD', MULTI_ITEM_RULESET)).toEqual(170);
-    expect(getTotalPrice('CADDCBCD', MULTI_ITEM_RULESET)).toEqual(170);
-
-    // -50 (1xA, 2xB), -15 (1xA, 1xB, 1xC, 1xD)
-    expect(getTotalPrice('AABBBCCDD', MULTI_ITEM_RULESET)).toEqual(195);
-    expect(getTotalPrice('ABBACDCDB', MULTI_ITEM_RULESET)).toEqual(195);
   });
 
   it('should have correct incremental totals when applying multi-item quantity discounts.', () => {
