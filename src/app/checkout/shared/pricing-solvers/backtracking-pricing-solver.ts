@@ -1,4 +1,4 @@
-import { CheckoutContext } from '../checkout-context';
+import { CartState } from '../cart-state';
 import { BasePricingRule } from '../pricing-rules/base-pricing-rule';
 import { SKUCountMap } from '../sku-count-map.interface';
 import { IPricingSolver } from './pricing-solver.interface';
@@ -9,17 +9,11 @@ import { IPricingSolver } from './pricing-solver.interface';
 export class BacktrackingPricingSolver implements IPricingSolver {
   constructor() {}
 
-  private skuCountMapToString(counts: SKUCountMap) {
-    return Object.entries(counts)
-      .map(([sku, count]) => `${sku},${count}`)
-      .join(',');
-  }
-
   solve(pricingRules: BasePricingRule[], cartItemCounts: SKUCountMap): number {
-    let minModifier = 0;
+    let maxDiscount = 0; // Lower the better
 
-    const modifierMemo: { [sku: string]: number } = {};
-    modifierMemo[this.skuCountMapToString(cartItemCounts)] = 0;
+    const discountMemo: { [sku: string]: number } = {};
+    discountMemo[SKUCountMap.skuCountMapToString(cartItemCounts)] = 0;
 
     // Traverse the state space tree using DFS.
     const stack = [cartItemCounts];
@@ -27,30 +21,30 @@ export class BacktrackingPricingSolver implements IPricingSolver {
     while (stack.length > 0) {
       const currentState = stack.pop();
       if (currentState) {
-        const stateHash = this.skuCountMapToString(currentState);
-
-        const stateCtx = new CheckoutContext(
+        const cartState = new CartState(
           currentState,
-          modifierMemo[stateHash] || 0
+          discountMemo[SKUCountMap.skuCountMapToString(currentState)]
         );
 
         for (const rule of pricingRules) {
-          if (rule.isConditionSatisfied(stateCtx)) {
-            const newCtx = rule.apply(stateCtx);
-            const newStateHash = this.skuCountMapToString(newCtx.cartItems);
-            const newMemoizedModifier = modifierMemo[newStateHash];
+          if (rule.isConditionSatisfied(cartState)) {
+            const newCartState = rule.apply(cartState);
+            const newStateHash = SKUCountMap.skuCountMapToString(
+              newCartState.cartItemCounts
+            );
+            const memoizedDiscount = discountMemo[newStateHash];
 
-            // Only traverse down the new state if it results in a higher discount value than the last time it was traversed.
+            // Only traverse down the new state if it is an unseen state or results in a higher discount value than the last time it was traversed.
             if (
-              newMemoizedModifier === undefined ||
-              newCtx.appliedPriceModifier < newMemoizedModifier
+              memoizedDiscount === undefined ||
+              newCartState.appliedPriceModifier < memoizedDiscount
             ) {
-              modifierMemo[newStateHash] = newCtx.appliedPriceModifier;
-              stack.push(newCtx.cartItems);
+              discountMemo[newStateHash] = newCartState.appliedPriceModifier;
+              stack.push(newCartState.cartItemCounts);
 
               // Update min as we go - saves us having to do min() at the end on a potentially massive memo map.
-              if (newCtx.appliedPriceModifier < minModifier) {
-                minModifier = newCtx.appliedPriceModifier;
+              if (newCartState.appliedPriceModifier < maxDiscount) {
+                maxDiscount = newCartState.appliedPriceModifier;
               }
             }
           }
@@ -58,6 +52,6 @@ export class BacktrackingPricingSolver implements IPricingSolver {
       }
     }
 
-    return minModifier;
+    return maxDiscount;
   }
 }

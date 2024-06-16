@@ -1,4 +1,4 @@
-import { ICheckoutContext } from '../checkout-context';
+import { ICartState } from '../cart-state';
 import { SKUCountMap } from '../sku-count-map.interface';
 import { IRuleCondition } from './rule-condition.interface';
 
@@ -38,31 +38,31 @@ export abstract class BasePricingRule {
    * @returns updated item counts with the consumed items removed.
    */
   protected applyItemConsumption(oldItemCounts: SKUCountMap): SKUCountMap {
-    let cartItems: SKUCountMap = { ...oldItemCounts };
+    let cartItemCounts: SKUCountMap = { ...oldItemCounts };
 
     for (const [sku, consumedCount] of Object.entries(
       this.getItemConsumption()
     )) {
-      if (sku in cartItems && consumedCount <= cartItems[sku]) {
-        cartItems[sku] -= consumedCount;
+      if (sku in cartItemCounts && consumedCount <= cartItemCounts[sku]) {
+        cartItemCounts[sku] -= consumedCount;
       } else {
         throw new Error(
-          `Attempted to consume non-existant cart item(s)! (Tried to consume ${consumedCount} of ${sku} with only ${cartItems[sku]} left in cart).`
+          `Attempted to consume non-existant cart item(s)! (Tried to consume ${consumedCount} of ${sku} with only ${cartItemCounts[sku]} left in cart).`
         );
       }
     }
 
-    return cartItems;
+    return cartItemCounts;
   }
 
   /**
    * Whether or not the condition for the pricing rule has been satisfied.
    *
-   * @param checkoutContext the current checkout cart context.
+   * @param cartState the current cart state.
    */
-  isConditionSatisfied(checkoutContext: ICheckoutContext): boolean {
+  isConditionSatisfied(cartState: ICartState): boolean {
     for (const condition of this.conditions) {
-      if (!condition.isSatisfied(checkoutContext)) {
+      if (!condition.isSatisfied(cartState)) {
         return false;
       }
     }
@@ -71,8 +71,8 @@ export abstract class BasePricingRule {
   }
 
   /**
-   * Applies the pricing rule to the given checkout context.
-   * @param checkoutContext checkout context to apply the rule modifier to.
+   * Applies the pricing rule to the given cart state.
+   * @param cartState cart state to apply the rule modifier to.
    */
-  abstract apply(checkoutContext: ICheckoutContext): ICheckoutContext;
+  abstract apply(cartState: ICartState): ICartState;
 }

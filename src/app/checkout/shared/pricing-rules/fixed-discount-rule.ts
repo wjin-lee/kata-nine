@@ -1,4 +1,4 @@
-import { CheckoutContext, ICheckoutContext } from '../checkout-context';
+import { CartState, ICartState } from '../cart-state';
 import { BasePricingRule } from './base-pricing-rule';
 import { IRuleCondition } from './rule-condition.interface';
 
@@ -13,11 +13,11 @@ export class FixedDiscountRule extends BasePricingRule {
     this.modifier = modifier;
   }
 
-  apply(ctx: ICheckoutContext): ICheckoutContext {
-    const cartItems = this.applyItemConsumption(ctx.cartItems);
-    return new CheckoutContext(
-      cartItems,
-      ctx.appliedPriceModifier + this.modifier
+  apply(cartState: ICartState): ICartState {
+    const cartItemCounts = this.applyItemConsumption(cartState.cartItemCounts);
+    return new CartState(
+      cartItemCounts,
+      cartState.appliedPriceModifier + this.modifier
     );
   }
 }

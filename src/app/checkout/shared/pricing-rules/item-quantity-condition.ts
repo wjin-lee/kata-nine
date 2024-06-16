@@ -1,5 +1,5 @@
 import { BaseItem } from 'src/app/items/shared/base-item';
-import { ICheckoutContext } from '../checkout-context';
+import { ICartState } from '../cart-state';
 import { SKUCountMap } from '../sku-count-map.interface';
 import { IRuleCondition } from './rule-condition.interface';
 
@@ -15,10 +15,10 @@ export class ItemQuantityCondition implements IRuleCondition {
     this.quantity = quantity;
   }
 
-  isSatisfied(ctx: ICheckoutContext): boolean {
+  isSatisfied(cartState: ICartState): boolean {
     return (
-      this.item.sku in ctx.cartItems &&
-      ctx.cartItems[this.item.sku] >= this.quantity
+      this.item.sku in cartState.cartItemCounts &&
+      cartState.cartItemCounts[this.item.sku] >= this.quantity
     );
   }
 

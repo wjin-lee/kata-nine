@@ -27,4 +27,10 @@ describe('ItemsComponent', () => {
     expect(item.name).toEqual('itemName');
     expect(item.unitPrice).toEqual(5.0);
   });
+
+  it('should error when trying to create an item object with an invalid name', () => {
+    expect(() => {
+      new StandardItem('invalid$SKU', 'itemName', 5.0);
+    }).toThrowError();
+  });
 });
