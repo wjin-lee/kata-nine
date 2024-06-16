@@ -1,7 +1,7 @@
 import { SKUCountMap } from './sku-count-map.interface';
 
 export interface ICheckoutContext {
-  readonly cartItems: SKUCountMap;
+  readonly cartItemCounts: SKUCountMap;
   readonly appliedPriceModifier: number;
 }
 
@@ -9,22 +9,22 @@ export interface ICheckoutContext {
  * Represents the a checkout cart state.
  */
 export class CheckoutContext implements ICheckoutContext {
-  private _cartItems: SKUCountMap;
+  private _cartItemCounts: SKUCountMap;
   private _appliedPriceModifier: number;
 
   /**
    * Instantiates a new checkout context
    *
-   * @param cartItems an item SKU to count mapping.
+   * @param cartItemCounts an item SKU to count mapping.
    * @param appliedPriceModifier the total discounts applied so far.
    */
-  constructor(cartItems: SKUCountMap, appliedPriceModifier: number) {
-    this._cartItems = cartItems;
+  constructor(cartItemCounts: SKUCountMap, appliedPriceModifier: number) {
+    this._cartItemCounts = cartItemCounts;
     this._appliedPriceModifier = appliedPriceModifier;
   }
 
-  public get cartItems() {
-    return this._cartItems;
+  public get cartItemCounts() {
+    return this._cartItemCounts;
   }
 
   public get appliedPriceModifier() {

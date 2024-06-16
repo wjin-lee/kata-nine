@@ -14,9 +14,9 @@ export class FixedDiscountRule extends BasePricingRule {
   }
 
   apply(ctx: ICheckoutContext): ICheckoutContext {
-    const cartItems = this.applyItemConsumption(ctx.cartItems);
+    const cartItemCounts = this.applyItemConsumption(ctx.cartItemCounts);
     return new CheckoutContext(
-      cartItems,
+      cartItemCounts,
       ctx.appliedPriceModifier + this.modifier
     );
   }

@@ -17,8 +17,8 @@ export class ItemQuantityCondition implements IRuleCondition {
 
   isSatisfied(ctx: ICheckoutContext): boolean {
     return (
-      this.item.sku in ctx.cartItems &&
-      ctx.cartItems[this.item.sku] >= this.quantity
+      this.item.sku in ctx.cartItemCounts &&
+      ctx.cartItemCounts[this.item.sku] >= this.quantity
     );
   }
 

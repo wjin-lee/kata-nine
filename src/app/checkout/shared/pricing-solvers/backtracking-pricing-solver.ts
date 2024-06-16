@@ -37,7 +37,9 @@ export class BacktrackingPricingSolver implements IPricingSolver {
         for (const rule of pricingRules) {
           if (rule.isConditionSatisfied(stateCtx)) {
             const newCtx = rule.apply(stateCtx);
-            const newStateHash = this.skuCountMapToString(newCtx.cartItems);
+            const newStateHash = this.skuCountMapToString(
+              newCtx.cartItemCounts
+            );
             const newMemoizedModifier = modifierMemo[newStateHash];
 
             // Only traverse down the new state if it results in a higher discount value than the last time it was traversed.
@@ -46,7 +48,7 @@ export class BacktrackingPricingSolver implements IPricingSolver {
               newCtx.appliedPriceModifier < newMemoizedModifier
             ) {
               modifierMemo[newStateHash] = newCtx.appliedPriceModifier;
-              stack.push(newCtx.cartItems);
+              stack.push(newCtx.cartItemCounts);
 
               // Update min as we go - saves us having to do min() at the end on a potentially massive memo map.
               if (newCtx.appliedPriceModifier < minModifier) {
