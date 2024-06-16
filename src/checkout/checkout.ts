@@ -1,8 +1,8 @@
-import { BaseItem } from 'src/app/items/shared/base-item';
-import { BasePricingRule } from './pricing-rules/base-pricing-rule';
-import { BacktrackingPricingSolver } from './pricing-solvers/backtracking-pricing-solver';
-import { IPricingSolver } from './pricing-solvers/pricing-solver.interface';
-import { SKUCountMap } from './sku-count-map.interface';
+import { BaseItem } from "../item/base-item";
+import { SKUCountMap } from "../shared/sku-count-map";
+import { BasePricingRule } from "./pricing-rules/base-pricing-rule";
+import { BacktrackingPricingSolver } from "./pricing-solver/backtracking-pricing-solver";
+import { IPricingSolver } from "./pricing-solver/pricing-solver";
 
 export interface ICheckout {
   total: number;
