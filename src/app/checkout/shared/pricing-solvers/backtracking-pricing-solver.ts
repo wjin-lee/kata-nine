@@ -1,3 +1,4 @@
+import { SKU_FORBIDDEN_CHAR } from 'src/app/items/shared/base-item';
 import { CheckoutContext } from '../checkout-context';
 import { BasePricingRule } from '../pricing-rules/base-pricing-rule';
 import { SKUCountMap } from '../sku-count-map.interface';
@@ -11,8 +12,8 @@ export class BacktrackingPricingSolver implements IPricingSolver {
 
   private skuCountMapToString(counts: SKUCountMap) {
     return Object.entries(counts)
-      .map(([sku, count]) => `${sku},${count}`)
-      .join(',');
+      .map(([sku, count]) => `${sku}${SKU_FORBIDDEN_CHAR}${count}`)
+      .join(SKU_FORBIDDEN_CHAR);
   }
 
   solve(pricingRules: BasePricingRule[], cartItemCounts: SKUCountMap): number {
