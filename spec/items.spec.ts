@@ -12,6 +12,6 @@ describe("ItemsComponent", () => {
   it("should error when trying to create an item object with an invalid name", () => {
     expect(() => {
       new StandardItem("invalid$SKU", "itemName", 5.0);
-    }).toThrowError();
+    }).toThrow(Error);
   });
 });
