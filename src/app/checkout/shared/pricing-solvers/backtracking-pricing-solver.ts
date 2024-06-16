@@ -1,4 +1,3 @@
-import { SKU_FORBIDDEN_CHAR } from 'src/app/items/shared/base-item';
 import { CheckoutContext } from '../checkout-context';
 import { BasePricingRule } from '../pricing-rules/base-pricing-rule';
 import { SKUCountMap } from '../sku-count-map.interface';
@@ -10,17 +9,11 @@ import { IPricingSolver } from './pricing-solver.interface';
 export class BacktrackingPricingSolver implements IPricingSolver {
   constructor() {}
 
-  private skuCountMapToString(counts: SKUCountMap) {
-    return Object.entries(counts)
-      .map(([sku, count]) => `${sku}${SKU_FORBIDDEN_CHAR}${count}`)
-      .join(SKU_FORBIDDEN_CHAR);
-  }
-
   solve(pricingRules: BasePricingRule[], cartItemCounts: SKUCountMap): number {
     let minModifier = 0;
 
     const modifierMemo: { [sku: string]: number } = {};
-    modifierMemo[this.skuCountMapToString(cartItemCounts)] = 0;
+    modifierMemo[SKUCountMap.skuCountMapToString(cartItemCounts)] = 0;
 
     // Traverse the state space tree using DFS.
     const stack = [cartItemCounts];
@@ -28,7 +21,7 @@ export class BacktrackingPricingSolver implements IPricingSolver {
     while (stack.length > 0) {
       const currentState = stack.pop();
       if (currentState) {
-        const stateHash = this.skuCountMapToString(currentState);
+        const stateHash = SKUCountMap.skuCountMapToString(currentState);
 
         const stateCtx = new CheckoutContext(
           currentState,
@@ -38,7 +31,7 @@ export class BacktrackingPricingSolver implements IPricingSolver {
         for (const rule of pricingRules) {
           if (rule.isConditionSatisfied(stateCtx)) {
             const newCtx = rule.apply(stateCtx);
-            const newStateHash = this.skuCountMapToString(
+            const newStateHash = SKUCountMap.skuCountMapToString(
               newCtx.cartItemCounts
             );
             const newMemoizedModifier = modifierMemo[newStateHash];
