@@ -1,11 +1,12 @@
 import { SKUCountMap } from "../../shared/sku-count-map";
 import { ICartState } from "../cart-state";
-import { IRuleCondition } from "./conditions/rule-condition";
+import { IRuleCondition } from "./conditions/rule-condition.interface";
+import { IPricingRule } from "./pricing-rule.interface";
 
 /**
  * Base class for a pricing rule.
  */
-export abstract class BasePricingRule {
+export abstract class BasePricingRule implements IPricingRule {
   private conditions: IRuleCondition[];
 
   constructor(conditions: IRuleCondition[]) {

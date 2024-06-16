@@ -1,7 +1,7 @@
 import { Checkout } from "../src/checkout/checkout";
-import { BasePricingRule } from "../src/checkout/pricing-rules/base-pricing-rule";
 import { ItemQuantityCondition } from "../src/checkout/pricing-rules/conditions/item-quantity-condition";
 import { FixedDiscountRule } from "../src/checkout/pricing-rules/fixed-discount-rule";
+import { IPricingRule } from "../src/checkout/pricing-rules/pricing-rule.interface";
 import { StandardItem } from "../src/item/standard-item";
 
 const DUMMY_ITEMS: { [sku: string]: StandardItem } = {
@@ -36,7 +36,7 @@ const MULTI_ITEM_RULESET = [
 ];
 
 describe("CheckoutComponent", () => {
-  function getTotalPrice(itemKeys: string, rules: BasePricingRule[]) {
+  function getTotalPrice(itemKeys: string, rules: IPricingRule[]) {
     const checkout = new Checkout(rules);
 
     for (let i = 0; i < itemKeys.length; i++) {

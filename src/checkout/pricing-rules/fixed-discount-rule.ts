@@ -1,6 +1,6 @@
 import { CartState, ICartState } from "../cart-state";
 import { BasePricingRule } from "./base-pricing-rule";
-import { IRuleCondition } from "./conditions/rule-condition";
+import { IRuleCondition } from "./conditions/rule-condition.interface";
 
 /**
  * A pricing rule that applies a constant-valued price modifier given that its condition has been met.
