@@ -3,6 +3,9 @@ import { BasePricingRule } from '../pricing-rules/base-pricing-rule';
 import { SKUCountMap } from '../sku-count-map.interface';
 import { IPricingSolver } from './pricing-solver.interface';
 
+/**
+ * Implements the DFS/Backtracking algorithm to solve for the maximum possible discount price.
+ */
 export class BacktrackingPricingSolver implements IPricingSolver {
   constructor() {}
 
