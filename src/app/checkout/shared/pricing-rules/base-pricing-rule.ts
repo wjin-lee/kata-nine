@@ -1,4 +1,4 @@
-import { ICheckoutContext } from '../checkout-context';
+import { ICartState } from '../cart-state';
 import { SKUCountMap } from '../sku-count-map.interface';
 import { IRuleCondition } from './rule-condition.interface';
 
@@ -58,11 +58,11 @@ export abstract class BasePricingRule {
   /**
    * Whether or not the condition for the pricing rule has been satisfied.
    *
-   * @param checkoutContext the current checkout cart context.
+   * @param cartState the current cart state.
    */
-  isConditionSatisfied(checkoutContext: ICheckoutContext): boolean {
+  isConditionSatisfied(cartState: ICartState): boolean {
     for (const condition of this.conditions) {
-      if (!condition.isSatisfied(checkoutContext)) {
+      if (!condition.isSatisfied(cartState)) {
         return false;
       }
     }
@@ -71,8 +71,8 @@ export abstract class BasePricingRule {
   }
 
   /**
-   * Applies the pricing rule to the given checkout context.
-   * @param checkoutContext checkout context to apply the rule modifier to.
+   * Applies the pricing rule to the given cart state.
+   * @param cartState cart state to apply the rule modifier to.
    */
-  abstract apply(checkoutContext: ICheckoutContext): ICheckoutContext;
+  abstract apply(cartState: ICartState): ICartState;
 }
