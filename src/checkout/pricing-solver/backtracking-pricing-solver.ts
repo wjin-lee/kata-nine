@@ -1,8 +1,8 @@
 import { SKUCountMap } from "../../shared/sku-count-map";
 import { CartState } from "../cart-state";
-import { BasePricingRule } from "../pricing-rules/base-pricing-rule";
+import { IPricingRule } from "../pricing-rules/pricing-rule.interface";
 
-import { IPricingSolver } from "./pricing-solver";
+import { IPricingSolver } from "./pricing-solver.interface";
 
 /**
  * Implements the DFS/Backtracking algorithm to solve for the maximum possible discount price.
@@ -10,7 +10,7 @@ import { IPricingSolver } from "./pricing-solver";
 export class BacktrackingPricingSolver implements IPricingSolver {
   constructor() {}
 
-  solve(pricingRules: BasePricingRule[], cartItemCounts: SKUCountMap): number {
+  solve(pricingRules: IPricingRule[], cartItemCounts: SKUCountMap): number {
     let maxDiscount = 0; // Lower the better
 
     const discountMemo: { [sku: string]: number } = {};

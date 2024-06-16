@@ -1,8 +1,8 @@
-import { BaseItem } from "../item/base-item";
+import { Item } from "../item/item.interface";
 import { SKUCountMap } from "../shared/sku-count-map";
-import { BasePricingRule } from "./pricing-rules/base-pricing-rule";
+import { IPricingRule } from "./pricing-rules/pricing-rule.interface";
 import { BacktrackingPricingSolver } from "./pricing-solver/backtracking-pricing-solver";
-import { IPricingSolver } from "./pricing-solver/pricing-solver";
+import { IPricingSolver } from "./pricing-solver/pricing-solver.interface";
 
 export interface ICheckout {
   total: number;
@@ -11,27 +11,27 @@ export interface ICheckout {
    * Adds an item to the checkout cart
    * @param item
    */
-  scan(item: BaseItem): void;
+  scan(item: Item): void;
 }
 
 /**
  * Represents a checkout cart instance.
  */
 export class Checkout implements ICheckout {
-  pricingRules: BasePricingRule[];
+  pricingRules: IPricingRule[];
   pricingSolver: IPricingSolver;
   _total: number = 0;
 
   private cartItemCounts: SKUCountMap = {};
-  private cartItems: { [sku: string]: BaseItem } = {};
+  private cartItems: { [sku: string]: Item } = {};
   private appliedPriceModifier: number = 0;
 
-  constructor(pricingRules: BasePricingRule[]) {
+  constructor(pricingRules: IPricingRule[]) {
     this.pricingRules = pricingRules;
     this.pricingSolver = new BacktrackingPricingSolver();
   }
 
-  scan(item: BaseItem): void {
+  scan(item: Item): void {
     const sku = item.sku;
     if (!(sku in this.cartItems)) {
       this.cartItems[sku] = item;

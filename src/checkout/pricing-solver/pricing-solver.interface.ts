@@ -1,5 +1,5 @@
 import { SKUCountMap } from "../../shared/sku-count-map";
-import { BasePricingRule } from "../pricing-rules/base-pricing-rule";
+import { IPricingRule } from "../pricing-rules/pricing-rule.interface";
 
 export interface IPricingSolver {
   /**
@@ -8,5 +8,5 @@ export interface IPricingSolver {
    * @param pricingRules the pricing rules to solve with
    * @param cartItemCounts current cart item counts
    */
-  solve(pricingRules: BasePricingRule[], cartItemCounts: SKUCountMap): number;
+  solve(pricingRules: IPricingRule[], cartItemCounts: SKUCountMap): number;
 }

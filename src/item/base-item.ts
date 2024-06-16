@@ -1,6 +1,8 @@
-export const SKU_FORBIDDEN_CHAR = '$';
+import { Item } from "./item.interface";
 
-export abstract class BaseItem {
+export const SKU_FORBIDDEN_CHAR = "$";
+
+export abstract class BaseItem implements Item {
   sku: string;
   name: string;
   unitPrice: number;
