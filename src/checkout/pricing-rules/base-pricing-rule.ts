@@ -1,6 +1,6 @@
-import { ICartState } from '../cart-state';
-import { SKUCountMap } from '../sku-count-map.interface';
-import { IRuleCondition } from './rule-condition.interface';
+import { SKUCountMap } from "../../shared/sku-count-map";
+import { ICartState } from "../cart-state";
+import { IRuleCondition } from "./conditions/rule-condition";
 
 /**
  * Base class for a pricing rule.

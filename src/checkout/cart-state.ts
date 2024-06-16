@@ -1,4 +1,4 @@
-import { SKUCountMap } from './sku-count-map.interface';
+import { SKUCountMap } from "../shared/sku-count-map";
 
 export interface ICartState {
   readonly cartItemCounts: SKUCountMap;

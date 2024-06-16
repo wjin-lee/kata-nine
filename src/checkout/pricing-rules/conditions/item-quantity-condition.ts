@@ -1,7 +1,7 @@
-import { BaseItem } from 'src/app/items/shared/base-item';
-import { ICartState } from '../cart-state';
-import { SKUCountMap } from '../sku-count-map.interface';
-import { IRuleCondition } from './rule-condition.interface';
+import { BaseItem } from "../../../item/base-item";
+import { SKUCountMap } from "../../../shared/sku-count-map";
+import { ICartState } from "../../cart-state";
+import { IRuleCondition } from "./rule-condition";
 
 /**
  * A pricing rule condition that is satisfied when a given item's quantity in the cart is above the threshold specified.

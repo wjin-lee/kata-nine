@@ -1,7 +1,8 @@
-import { CartState } from '../cart-state';
-import { BasePricingRule } from '../pricing-rules/base-pricing-rule';
-import { SKUCountMap } from '../sku-count-map.interface';
-import { IPricingSolver } from './pricing-solver.interface';
+import { SKUCountMap } from "../../shared/sku-count-map";
+import { CartState } from "../cart-state";
+import { BasePricingRule } from "../pricing-rules/base-pricing-rule";
+
+import { IPricingSolver } from "./pricing-solver";
 
 /**
  * Implements the DFS/Backtracking algorithm to solve for the maximum possible discount price.

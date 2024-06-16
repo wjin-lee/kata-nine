@@ -1,4 +1,4 @@
-import { SKU_FORBIDDEN_CHAR } from 'src/app/items/shared/base-item';
+import { SKU_FORBIDDEN_CHAR } from "../item/base-item";
 
 /**
  * A map from a given SKU to its count.

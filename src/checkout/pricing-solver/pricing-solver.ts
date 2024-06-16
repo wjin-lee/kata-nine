@@ -1,5 +1,5 @@
-import { BasePricingRule } from '../pricing-rules/base-pricing-rule';
-import { SKUCountMap } from '../sku-count-map.interface';
+import { SKUCountMap } from "../../shared/sku-count-map";
+import { BasePricingRule } from "../pricing-rules/base-pricing-rule";
 
 export interface IPricingSolver {
   /**
